@@ -4,8 +4,8 @@
         <img src="./assets/icon.png" alt="icon" />
         <router-link id="brand" to="/">censura</router-link>
       </div>
-    <router-link to="/">
-      <i class="fa-solid fa-circle-plus fa-xs"></i>Posts</router-link
+    <router-link to="/post">
+      <i class="fa-solid fa-circle-plus fa-xs"></i> New Post</router-link
     >
     <router-link to="/">
       <i class="fa-solid fa-gear fa-xs"></i> Settings</router-link
@@ -29,7 +29,7 @@
 <style lang="scss">
 #router-view {
   height: 100%;
-  width: 100%;
+  width: 85%;
   display: flex;
 }
 .view{

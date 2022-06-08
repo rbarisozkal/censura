@@ -38,12 +38,16 @@
     </div>
     
 </div>
+
   </div>
 </template>
 
 <script>
+
 export default {
-  
+  components:{
+    
+  }
 }
 </script>
 
@@ -52,10 +56,12 @@ export default {
 .cards{
   display: flex;
   flex-direction: row;
+  
 }
 .hello{
   display: flex;
   flex-direction: column;
+  max-width: 85%;
 }
 h2 {
   text-align: left;
