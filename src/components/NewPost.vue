@@ -3,24 +3,61 @@
     <form action="">
       <h3 class="post-header">What do you want to talk about>></h3>
       <div class="labels">
-        <select name="context" id="context">
-          <option value="noChoice">Choose Context</option>
-          <option value="music">Music</option>
-          <option value="books">Books</option>
-          <option value="movie">Movie</option>
+        <select @change="(e) => (chosenContext = e.target.value)">
+          <option :value="context" v-for="context in contexts" :key="context">
+            {{ context }}
+          </option>
         </select>
+      </div>
+      <div class="music-container">
+        <label for="choice">By song name or by artist?</label>
+        <div class="music-mini-container">
+          by Artist Name<input
+            type="radio"
+            :v-model="choice"
+            name="choice"
+            id="artist"
+            value="by Artist"
+          />
+        </div>
+        <div class="music-mini-container">
+          by Song Name<input
+            type="radio"
+            :v-model="choice"
+            name="choice"
+            id="songName"
+            value="by Song Name"
+          />
+        </div>
+        <label for="artist">Enter artist: </label>
+        <input :v-model="artist" type="text" />
+        <label for="song">Enter song name: </label>
+        <input :v-model="songName" type="text" />
       </div>
       <div class="input-area">
         <textarea class="post-context" type="" name="input"></textarea>
       </div>
+
       <button id="post">CENSURA!</button>
     </form>
   </div>
 </template>
 
 <script>
+//import vSelect from 'vue-select';
 export default {
   name: "NewPost",
+  components: {},
+  data() {
+    return {
+      contexts: ["Movies", "Books", "Song/Artists"],
+    };
+  },
+  computed: {
+    songs() {
+      return this.$store.state.songs;
+    },
+  },
   mounted() {
     this.$store.dispatch("getSongs");
   },
@@ -28,6 +65,21 @@ export default {
 </script>
 
 <style scoped lang="scss">
+.music-mini-container {
+  display: flex;
+  flex-direction: row;
+}
+.music-container {
+  display: flex;
+  align-items: flex-start;
+  max-width: 50%;
+  flex-direction: column;
+  margin: 1rem 0 1rem 0;
+  & label,
+  input {
+    padding: 0 0 5px 0;
+  }
+}
 select {
   background-color: #1f99cd;
   background-position: right 10px center;
