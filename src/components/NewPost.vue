@@ -9,30 +9,34 @@
           </option>
         </select>
       </div>
-      <div class="music-container">
+      <div v-if="chosenContext === 'Song/Artists'" class="music-container">
         <label for="choice">By song name or by artist?</label>
-        <div class="music-mini-container">
-          by Artist Name<input
-            type="radio"
-            :v-model="choice"
-            name="choice"
-            id="artist"
-            value="by Artist"
+        <div class="mini-container">
+          <label for="artist">Artist?</label>
+          <input
+            type="checkbox"
+            v-model="toggle"
+			value="artistChoice"
+          />
+          <label for="song">Song?</label>
+          <input
+            type="checkbox"
+            v-model="toggle"
+			value="songChoice"
           />
         </div>
-        <div class="music-mini-container">
-          by Song Name<input
-            type="radio"
-            :v-model="choice"
-            name="choice"
-            id="songName"
-            value="by Song Name"
-          />
-        </div>
-        <label for="artist">Enter artist: </label>
-        <input :v-model="artist" type="text" />
+        <label v-if="choice === 'artistChoice'" for="artist"
+          >Enter artist:
+        </label>
+        <input v-if="choice !== 'artistChoice'" :v-model="artist" type="text" />
         <label for="song">Enter song name: </label>
-        <input :v-model="songName" type="text" />
+        <input v-model="songName" type="text" />
+      </div>
+      <div v-else-if="chosenContext === 'Movies'" class="movie-container">
+        <div class="mini-container">
+          <label required for="choice">Enter movie name:</label>
+          <input type="text" />
+        </div>
       </div>
       <div class="input-area">
         <textarea class="post-context" type="" name="input"></textarea>
@@ -50,8 +54,12 @@ export default {
   components: {},
   data() {
     return {
-      contexts: ["Movies", "Books", "Song/Artists"],
+      contexts: ["Select category", "Movies", "Books", "Song/Artists"],
+      chosenContext: "",
     };
+  },
+  methods: {
+    checkContext() {},
   },
   computed: {
     songs() {
@@ -65,9 +73,11 @@ export default {
 </script>
 
 <style scoped lang="scss">
-.music-mini-container {
+.mini-container {
   display: flex;
   flex-direction: row;
+  margin-top: 5px;
+  max-width: 50%;
 }
 .music-container {
   display: flex;
@@ -75,9 +85,15 @@ export default {
   max-width: 50%;
   flex-direction: column;
   margin: 1rem 0 1rem 0;
-  & label,
-  input {
+  & label {
     padding: 0 0 5px 0;
+  }
+  & span {
+    padding: 0 5px 5px 0;
+  }
+  & input {
+    padding: 0 5px 5px 0;
+    outline: none;
   }
 }
 select {
@@ -101,6 +117,7 @@ select {
 .labels {
   display: flex;
   flex-direction: row;
+  margin-bottom: 1rem;
 }
 .input-area {
   display: block;
@@ -177,5 +194,6 @@ label {
   height: auto;
   border: 0.5px solid grey;
   padding: 20px;
+  margin-top: 1rem;
 }
 </style>
