@@ -13,24 +13,15 @@
         <label for="choice">By song name or by artist?</label>
         <div class="mini-container">
           <label for="artist">Artist?</label>
-          <input
-            type="checkbox"
-            v-model="toggle"
-			value="artistChoice"
-          />
+          <input type="checkbox" v-model="toggle" value="artistChoice" />
           <label for="song">Song?</label>
-          <input
-            type="checkbox"
-            v-model="toggle"
-			value="songChoice"
-          />
+          <input type="checkbox" v-model="toggle" value="songChoice" />
         </div>
-        <label v-if="choice === 'artistChoice'" for="artist"
-          >Enter artist:
-        </label>
-        <input v-if="choice !== 'artistChoice'" :v-model="artist" type="text" />
+        <label for="artist">Enter artist: </label>
+        <input v-model="artistName" type="text" />
         <label for="song">Enter song name: </label>
         <input v-model="songName" type="text" />
+        <button class="listSongsButton" type="submit">List Songs</button>
       </div>
       <div v-else-if="chosenContext === 'Movies'" class="movie-container">
         <div class="mini-container">
@@ -38,11 +29,21 @@
           <input type="text" />
         </div>
       </div>
+
+      <div v-else-if="chosenContext === 'Books'" class="book-container">
+        <div class="mini-book-container">
+          <label for="choice">Enter book name:</label>
+          <input required type="text" />
+          <label required for="choice">Enter author name:</label>
+          <input required type="text" />
+        </div>
+      </div>
+
       <div class="input-area">
         <textarea class="post-context" type="" name="input"></textarea>
       </div>
 
-      <button id="post">CENSURA!</button>
+      <button id="postButton">CENSURA!</button>
     </form>
   </div>
 </template>
@@ -73,18 +74,41 @@ export default {
 </script>
 
 <style scoped lang="scss">
+.book-container{
+	display: flex;
+	flex-direction: column;
+	max-width: 50%;
+	align-items: flex-start;
+	& .mini-book-container{
+		display: flex;
+		flex-direction: column;
+		align-content: flex-start;
+		padding-bottom:10px ;
+	}
+}
+
+$primary-color: #1f99cd;
+$text-color: mix(#ffffff, $primary-color, 64%);
+.listSongsButton {
+  align-self: flex-end;
+  padding: 10px;
+  background-color: $primary-color;
+  border: none;
+  color: #ffffff;
+  cursor: pointer;
+}
 .mini-container {
   display: flex;
   flex-direction: row;
   margin-top: 5px;
   max-width: 50%;
 }
-.music-container {
+.music-container{
   display: flex;
   align-items: flex-start;
   max-width: 50%;
   flex-direction: column;
-  margin: 1rem 0 1rem 0;
+  margin: 0 0 1rem 0;
   & label {
     padding: 0 0 5px 0;
   }
@@ -122,7 +146,7 @@ select {
 .input-area {
   display: block;
 }
-#post {
+#postButton {
   max-width: 100px;
   height: 40px;
   align-self: flex-end;
@@ -130,6 +154,7 @@ select {
   border: 0.1rem solid grey;
   margin-top: 0.4rem;
   border-radius: 99em;
+  cursor: pointer;
 }
 .post-context {
   display: block;
@@ -149,8 +174,7 @@ form {
   flex-wrap: wrap;
   flex-direction: column;
 }
-$primary-color: rgb(68, 96, 255);
-$text-color: mix(#000, $primary-color, 64%);
+
 label {
   display: inline-block;
   cursor: pointer;
@@ -190,7 +214,7 @@ label {
 .new-post {
   display: flex;
   flex-direction: column;
-  max-width: auto;
+  min-width: 70%;
   height: auto;
   border: 0.5px solid grey;
   padding: 20px;
