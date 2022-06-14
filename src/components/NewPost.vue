@@ -13,7 +13,7 @@
         <label for="choice">By song name or by artist?</label>
         <div class="mini-container">
           <label for="artist">Artist?</label>
-          <input type="checkbox"  value="artistChoice" />
+          <input type="checkbox" value="artistChoice" />
           <label for="song">Song?</label>
           <input type="checkbox" value="songChoice" />
         </div>
@@ -21,7 +21,9 @@
         <input v-model="artistInput" type="text" />
         <label for="song">Enter song name: </label>
         <input v-model="songInput" type="text" />
-        <button class="listSongsButton" @click="songList" type="button">List Songs</button>
+        <button class="listSongsButton" @click="songList" type="button">
+          List Songs
+        </button>
       </div>
       <div v-else-if="chosenContext === 'Movies'" class="movie-container">
         <div class="mini-container">
@@ -48,9 +50,11 @@
           :key="song.data.id"
           :track="song.data.name"
           :artist="song.data.artists"
-        >{{song.data.name}}</li>
+        >
+          {{ song.data.name }}
+        </li>
       </ul>
-      <button @click="returnSongArray" type="button"  id="postButton">CENSURA!</button>
+      <button @click="songs" type="button" id="postButton">CENSURA!</button>
     </form>
   </div>
 </template>
@@ -60,30 +64,31 @@
 //import vSelect from 'vue-select';
 export default {
   name: "NewPost",
-  components: {  },
+  components: {},
   data() {
     return {
       contexts: ["Select category", "Movies", "Books", "Song/Artists"],
       chosenContext: "",
-      songArr:[]
+      songArr: [],
+      artistInput: "",
+      songInput: "",
     };
   },
   methods: {
-    returnSongArray(){
-      this.songArr=this.$store.state.songs;
-    },
-     async songList() {
-      return this.$store.state.songs;
-    },
-  },
-  computed: {
     songs() {
-      return this.$store.state.songs;
+      this.$store.dispatch("getSongs", this.songInput);
     },
   },
-  mounted() {
-    this.$store.dispatch("getSongs",this.artistInput);
+  mounted(){
+    this.songs;
   },
+  watch:{
+    selected:{
+      handler:function () {
+        this.songs;
+      }
+    }
+  }
 };
 </script>
 

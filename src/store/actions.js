@@ -1,16 +1,16 @@
 import axios from 'axios';
-export const getSongs = ({commit},artist)=>{
+export  const getSongs = ({commit},track)=>{
     const options = {
         method: 'GET',
         url: 'https://spotify23.p.rapidapi.com/search/',
-        params: {q:`${artist}`, type: 'multi', offset: '0', limit: '10', numberOfTopResults: '5'},
+        params: {q:`${track}`, type: 'tracks', offset: '0', limit: '10', numberOfTopResults: '5'},
         headers: {
           'X-RapidAPI-Key': 'd6b0203059msh5165e1a7177052ap178d45jsn5660ca694bd2',
           'X-RapidAPI-Host': 'spotify23.p.rapidapi.com'
         }
       };
-      axios.request(options).then(function (response) {
-          console.log(response.data.tracks)
+       axios.request(options).then(function (response) {
+          console.log(response.data.tracks.items);
           commit("SET_SONGS",response.data.tracks.items);
       }).catch(function (error) {
           console.error(error);
