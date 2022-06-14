@@ -10,16 +10,17 @@ export const getSongs = ({commit},artist)=>{
         }
       };
       axios.request(options).then(function (response) {
+          console.log(response.data.tracks)
           commit("SET_SONGS",response.data.tracks.items);
       }).catch(function (error) {
           console.error(error);
       });
 }
-export const getMovies=({commit})=>{
+export const getMovies=({commit},movieName)=>{
     const options = {
         method: 'GET',
         url: 'https://online-movie-database.p.rapidapi.com/title/find',
-        params: {q: 'game of thr'},
+        params: {q:`${movieName}`},
         headers: {
           'X-RapidAPI-Key': 'd6b0203059msh5165e1a7177052ap178d45jsn5660ca694bd2',
           'X-RapidAPI-Host': 'online-movie-database.p.rapidapi.com'

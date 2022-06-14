@@ -13,54 +13,68 @@
         <label for="choice">By song name or by artist?</label>
         <div class="mini-container">
           <label for="artist">Artist?</label>
-          <input type="checkbox" v-model="toggle" value="artistChoice" />
+          <input type="checkbox"  value="artistChoice" />
           <label for="song">Song?</label>
-          <input type="checkbox" v-model="toggle" value="songChoice" />
+          <input type="checkbox" value="songChoice" />
         </div>
         <label for="artist">Enter artist: </label>
-        <input v-model="artistName" type="text" />
+        <input v-model="artistInput" type="text" />
         <label for="song">Enter song name: </label>
-        <input v-model="songName" type="text" />
-        <button class="listSongsButton" type="submit">List Songs</button>
+        <input v-model="songInput" type="text" />
+        <button class="listSongsButton" @click="songList" type="button">List Songs</button>
       </div>
       <div v-else-if="chosenContext === 'Movies'" class="movie-container">
         <div class="mini-container">
-          <label required for="choice">Enter movie name:</label>
-          <input type="text" />
+          <label for="choice">Enter movie name:</label>
+          <input v-model="movieInput" type="text" />
         </div>
       </div>
 
       <div v-else-if="chosenContext === 'Books'" class="book-container">
         <div class="mini-book-container">
           <label for="choice">Enter book name:</label>
-          <input required type="text" />
+          <input v-model="bookInput" required type="text" />
           <label required for="choice">Enter author name:</label>
-          <input required type="text" />
+          <input v-model="authorInput" type="text" />
         </div>
       </div>
 
       <div class="input-area">
         <textarea class="post-context" type="" name="input"></textarea>
       </div>
-
-      <button id="postButton">CENSURA!</button>
+      <ul v-if="chosenContext === 'Song/Artists'">
+        <li
+          v-for="song in songs"
+          :key="song.data.id"
+          :track="song.data.name"
+          :artist="song.data.artists"
+        >{{song.data.name}}</li>
+      </ul>
+      <button @click="returnSongArray" type="button"  id="postButton">CENSURA!</button>
     </form>
   </div>
 </template>
 
 <script>
+// import ListElements from "./ListElements.vue";
 //import vSelect from 'vue-select';
 export default {
   name: "NewPost",
-  components: {},
+  components: {  },
   data() {
     return {
       contexts: ["Select category", "Movies", "Books", "Song/Artists"],
       chosenContext: "",
+      songArr:[]
     };
   },
   methods: {
-    checkContext() {},
+    returnSongArray(){
+      this.songArr=this.$store.state.songs;
+    },
+     async songList() {
+      return this.$store.state.songs;
+    },
   },
   computed: {
     songs() {
@@ -68,23 +82,30 @@ export default {
     },
   },
   mounted() {
-    this.$store.dispatch("getSongs");
+    this.$store.dispatch("getSongs",this.artistInput);
   },
 };
 </script>
 
 <style scoped lang="scss">
-.book-container{
-	display: flex;
-	flex-direction: column;
-	max-width: 50%;
-	align-items: flex-start;
-	& .mini-book-container{
-		display: flex;
-		flex-direction: column;
-		align-content: flex-start;
-		padding-bottom:10px ;
-	}
+ul {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding-left: 0;
+  max-width: 50%;
+}
+.book-container {
+  display: flex;
+  flex-direction: column;
+  max-width: 50%;
+  align-items: flex-start;
+  & .mini-book-container {
+    display: flex;
+    flex-direction: column;
+    align-content: flex-start;
+    padding-bottom: 10px;
+  }
 }
 
 $primary-color: #1f99cd;
@@ -103,7 +124,7 @@ $text-color: mix(#ffffff, $primary-color, 64%);
   margin-top: 5px;
   max-width: 50%;
 }
-.music-container{
+.music-container {
   display: flex;
   align-items: flex-start;
   max-width: 50%;
