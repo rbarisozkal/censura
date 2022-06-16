@@ -21,7 +21,7 @@
         <input v-model="artistInput" type="text" />
         <label for="song">Enter song name: </label>
         <input v-model="songInput" type="text" />
-        <button class="listSongsButton" @click="songList" type="button">
+        <button class="listSongsButton" @click="songs" type="button">
           List Songs
         </button>
       </div>
@@ -46,12 +46,12 @@
       </div>
       <ul v-if="chosenContext === 'Song/Artists'">
         <li
-          v-for="song in songs"
+          v-for="song in songArr"
           :key="song.data.id"
           :track="song.data.name"
           :artist="song.data.artists"
         >
-          {{ song.data.name }}
+          {{ song.data.name }} by {{song.data.artists.items[0].profile.name}}
         </li>
       </ul>
       <button @click="songs" type="button" id="postButton">CENSURA!</button>
@@ -62,6 +62,7 @@
 <script>
 // import ListElements from "./ListElements.vue";
 //import vSelect from 'vue-select';
+
 export default {
   name: "NewPost",
   components: {},
@@ -69,26 +70,29 @@ export default {
     return {
       contexts: ["Select category", "Movies", "Books", "Song/Artists"],
       chosenContext: "",
-      songArr: [],
       artistInput: "",
       songInput: "",
+      songArr:[]
     };
   },
   methods: {
     songs() {
       this.$store.dispatch("getSongs", this.songInput);
+      this.songArr=this.$store.state.songs;
+      console.log(this.songArr)
     },
   },
-  mounted(){
+  mounted() {
     this.songs;
   },
-  watch:{
-    selected:{
-      handler:function () {
+
+  watch: {
+    selected: {
+      handler: function () {
         this.songs;
-      }
-    }
-  }
+      },
+    },
+  },
 };
 </script>
 
