@@ -9,27 +9,67 @@
           </option>
         </select>
       </div>
+
       <div v-if="chosenContext === 'Song/Artists'" class="music-container">
-        <label for="choice">By song name or by artist?</label>
-        <div class="mini-container">
-          <label for="artist">Artist?</label>
-          <input type="checkbox" value="artistChoice" />
-          <label for="song">Song?</label>
-          <input type="checkbox" value="songChoice" />
+        <div class="songInfo">
+          <label for="choice">By song name or by artist?</label>
+          <div class="mini-container">
+            <label for="artist">Artist?</label>
+            <input type="checkbox" value="artistChoice" />
+            <label for="song">Song?</label>
+            <input type="checkbox" value="songChoice" />
+          </div>
+          <label for="song">Enter song name: </label>
+          <input v-model="songInput" type="text" />
+
+          <button class="songs" @click="songs()" type="button">
+            List Songs
+          </button>
         </div>
-        <label for="artist">Enter artist: </label>
-        <input v-model="artistInput" type="text" />
-        <label for="song">Enter song name: </label>
-        <input v-model="songInput" type="text" />
-        <button class="listSongsButton" @click="songs" type="button">
-          List Songs
-        </button>
+        <ul
+          v-if="
+            chosenContext === 'Song/Artists' &&
+            (songArr != undefined || songArr != null)
+          "
+        >
+          <li
+            v-for="song in songArr"
+            :key="song.data.id"
+            :track="song.data.name"
+            :artist="song.data.artists"
+          >
+            {{ song.data.name }} by
+            {{ song.data.artists.items[0].profile.name }}
+          </li>
+        </ul>
       </div>
+
       <div v-else-if="chosenContext === 'Movies'" class="movie-container">
         <div class="mini-container">
           <label for="choice">Enter movie name:</label>
           <input v-model="movieInput" type="text" />
         </div>
+        <ul
+          v-if="
+            chosenContext === 'Movies' &&
+            (moviesArr != undefined || moviesArr != null)
+          "
+        >
+          <!-- eslint-disable -->
+          <li v-for="movie in moviesArr" :key="movie" :title="movie.title">
+            {{ movie.title }}
+          </li>
+          <!-- eslint-disable -->
+        </ul>
+        <button
+          @click="
+            movies();
+            filterMovieArray();
+          "
+          type="button"
+        >
+          List movies
+        </button>
       </div>
 
       <div v-else-if="chosenContext === 'Books'" class="book-container">
@@ -44,17 +84,8 @@
       <div class="input-area">
         <textarea class="post-context" type="" name="input"></textarea>
       </div>
-      <ul v-if="chosenContext === 'Song/Artists'">
-        <li
-          v-for="song in songArr"
-          :key="song.data.id"
-          :track="song.data.name"
-          :artist="song.data.artists"
-        >
-          {{ song.data.name }} by {{song.data.artists.items[0].profile.name}}
-        </li>
-      </ul>
-      <button @click="songs" type="button" id="postButton">CENSURA!</button>
+
+      <button id="postButton">CENSURA!</button>
     </form>
   </div>
 </template>
@@ -70,26 +101,43 @@ export default {
     return {
       contexts: ["Select category", "Movies", "Books", "Song/Artists"],
       chosenContext: "",
-      artistInput: "",
       songInput: "",
-      songArr:[]
+      movieInput: "",
+      songArr: [],
+      moviesArr: [],
     };
   },
   methods: {
-    songs() {
-      this.$store.dispatch("getSongs", this.songInput);
-      this.songArr=this.$store.state.songs;
-      console.log(this.songArr)
+    async songs() {
+      console.log(this.songArr);
+      this.songArr = await this.$store.dispatch("getSongs", this.songInput);
+      this.songInput = "";
+    },
+    async movies() {
+      console.log(this.moviesArr);
+      this.moviesArr = await this.$store.dispatch("getMovies", this.movieInput);
+      this.movieInput = "";
+    },
+    async books() {
+      console.log(this.booksArr);
+      this.booksArr = await this.$store.dispatch("getBooks", this.bookInput);
+      this.bookInput = "";
+    },
+    filterMovieArray() {
+      return  this.moviesArr.filter((movie) => {
+        Object.prototype.hasOwnProperty.call(movie, "title");
+      });
     },
   },
-  mounted() {
-    this.songs;
+  computed: {
+    
   },
-
   watch: {
     selected: {
       handler: function () {
-        this.songs;
+        this.songArr;
+        this.moviesArr;
+        this.booksArr;
       },
     },
   },
@@ -101,8 +149,32 @@ ul {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
+
+  margin-top: 0;
   padding-left: 0;
   max-width: 50%;
+  li {
+    padding: 5px;
+    margin: 5px;
+    list-style: none;
+  }
+}
+.songInfo {
+  display: flex;
+  align-items: flex-start;
+  max-width: 50%;
+  flex-direction: column;
+  margin: 0 0 1rem 0;
+  & label {
+    padding: 0 0 5px 0;
+  }
+  & span {
+    padding: 0 5px 5px 0;
+  }
+  & input {
+    padding: 0 5px 5px 0;
+    outline: none;
+  }
 }
 .book-container {
   display: flex;
@@ -135,20 +207,7 @@ $text-color: mix(#ffffff, $primary-color, 64%);
 }
 .music-container {
   display: flex;
-  align-items: flex-start;
-  max-width: 50%;
-  flex-direction: column;
-  margin: 0 0 1rem 0;
-  & label {
-    padding: 0 0 5px 0;
-  }
-  & span {
-    padding: 0 5px 5px 0;
-  }
-  & input {
-    padding: 0 5px 5px 0;
-    outline: none;
-  }
+  flex-direction: row;
 }
 select {
   background-color: #1f99cd;
