@@ -34,11 +34,11 @@
         >
           <li
             v-for="song in songArr"
-            :key="song.data.id"
-            :track="song.data.name"
+            :key="song.track.key"
+            :track="song.track.title"
             :artist="song.data.artists"
           >
-            {{ song.data.name }} by
+            {{ song.track.title }} by
             {{ song.data.artists.items[0].profile.name }}
           </li>
         </ul>
@@ -55,16 +55,14 @@
             (moviesArr != undefined || moviesArr != null)
           "
         >
-          <!-- eslint-disable -->
-          <li v-for="movie in moviesArr" :key="movie" :title="movie.title">
-            {{ movie.title }}
+          <li v-for="movie in moviesArr" :key="movie" :title="movie.title" :id="movie.id" :description="movie.description">
+            {{ movie.title }} -- {{movie.description}}
           </li>
-          <!-- eslint-disable -->
+  
         </ul>
         <button
           @click="
             movies();
-            filterMovieArray();
           "
           type="button"
         >
@@ -76,9 +74,32 @@
         <div class="mini-book-container">
           <label for="choice">Enter book name:</label>
           <input v-model="bookInput" required type="text" />
-          <label required for="choice">Enter author name:</label>
-          <input v-model="authorInput" type="text" />
         </div>
+        <ul
+          v-if="
+            chosenContext ===  'Books' &&
+            (booksArr != undefined || booksArr != null)
+          "
+        >
+          <li
+            v-for="book in booksArr"
+            :key="book.id"
+            :title="book.volumeInfo.title"
+            :author="book.volumeInfo.authors[0]"
+            :publisher="book.volumeInfo.publisher"
+          >
+            {{ book.volumeInfo.title}} by
+            {{ book.volumeInfo.authors[0]}}
+          </li>
+        </ul> 
+        <button
+          @click="
+           books();
+          "
+          type="button"
+        >
+          List Books or Authors
+        </button>
       </div>
 
       <div class="input-area">
@@ -103,8 +124,10 @@ export default {
       chosenContext: "",
       songInput: "",
       movieInput: "",
+      bookInput:"",
       songArr: [],
       moviesArr: [],
+      booksArr:[]
     };
   },
   methods: {
@@ -114,19 +137,15 @@ export default {
       this.songInput = "";
     },
     async movies() {
-      console.log(this.moviesArr);
       this.moviesArr = await this.$store.dispatch("getMovies", this.movieInput);
+      console.log(this.moviesArr);
       this.movieInput = "";
     },
     async books() {
-      console.log(this.booksArr);
+      
       this.booksArr = await this.$store.dispatch("getBooks", this.bookInput);
+      console.log(this.booksArr);
       this.bookInput = "";
-    },
-    filterMovieArray() {
-      return  this.moviesArr.filter((movie) => {
-        Object.prototype.hasOwnProperty.call(movie, "title");
-      });
     },
   },
   computed: {

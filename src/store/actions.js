@@ -2,24 +2,18 @@ import axios from "axios";
 export const getSongs = ({ commit }, track) => {
   const options = {
     method: "GET",
-    url: "https://spotify23.p.rapidapi.com/search/",
-    params: {
-      q: `${track}`,
-      type: "tracks",
-      offset: "0",
-      limit: "10",
-      numberOfTopResults: "5",
-    },
+    url: "https://shazam.p.rapidapi.com/search",
+    params: { term: `${track}`, locale: "en-US", offset: "0", limit: "5" },
     headers: {
       "X-RapidAPI-Key": "d6b0203059msh5165e1a7177052ap178d45jsn5660ca694bd2",
-      "X-RapidAPI-Host": "spotify23.p.rapidapi.com",
+      "X-RapidAPI-Host": "shazam.p.rapidapi.com",
     },
   };
   return axios
     .request(options)
     .then(function (response) {
-      commit("SET_SONGS", response.data.tracks.items);
-      return response.data.tracks.items;
+      commit("SET_SONGS", response.tracks.hits);
+      return response.tracks.hits;
     })
     .catch(function (error) {
       console.error(error);
@@ -27,17 +21,8 @@ export const getSongs = ({ commit }, track) => {
 };
 export const getMovies = ({ commit }, movieName) => {
   if (movieName != " " || movieName != "") {
-    const options = {
-      method: "GET",
-      url: "https://online-movie-database.p.rapidapi.com/title/find",
-      params: { q: `${movieName}` },
-      headers: {
-        "X-RapidAPI-Key": "d6b0203059msh5165e1a7177052ap178d45jsn5660ca694bd2",
-        "X-RapidAPI-Host": "online-movie-database.p.rapidapi.com",
-      },
-    };
     return axios
-      .request(options)
+      .get(`https://imdb-api.com/en/API/SearchTitle/k_l4j6isbb/${movieName}`)
       .then(function (response) {
         commit("SET_MOVIES", response.data.results);
         return response.data.results;
@@ -49,21 +34,15 @@ export const getMovies = ({ commit }, movieName) => {
     console.error("Movie input is empty!");
   }
 };
-export const getBooks = ({ commit }) => {
-  const options = {
-    method: "GET",
-    url: "https://hapi-books.p.rapidapi.com/book/56597885",
-    headers: {
-      "X-RapidAPI-Key": "d6b0203059msh5165e1a7177052ap178d45jsn5660ca694bd2",
-      "X-RapidAPI-Host": "hapi-books.p.rapidapi.com",
-    },
-  };
-
-  axios
-    .request(options)
+export const getBooks = ({ commit }, bookInput) => {
+  return axios
+    .get(
+      `https://www.googleapis.com/books/v1/volumes?q=${bookInput}&printType=all&key=AIzaSyCWEqSK3LFYVNNx0OWLXq6BC77uX1wWzlQ&maxResults=5&country=US`
+    )
     .then(function (response) {
-      commit("SET_BOOKS", response.data);
-      console.log(response.data);
+      commit("SET_BOOKS", response.data.items);
+      console.log(response.data.items);
+      return response.data.items;
     })
     .catch(function (error) {
       console.error(error);
