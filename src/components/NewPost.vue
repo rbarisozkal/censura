@@ -33,13 +33,13 @@
           "
         >
           <li
-            v-for="song in songArr"
-            :key="song.track.key"
-            :track="song.track.title"
-            :artist="song.data.artists"
+            v-for="song in songArr.items"
+            :key="song.id"
+            :track="song.name"
+            :artist="song.artists[0].name"
           >
-            {{ song.track.title }} by
-            {{ song.data.artists.items[0].profile.name }}
+            {{ song.name }} by
+            {{ song.artists[0].name }}
           </li>
         </ul>
       </div>
@@ -55,19 +55,17 @@
             (moviesArr != undefined || moviesArr != null)
           "
         >
-          <li v-for="movie in moviesArr" :key="movie" :title="movie.title" :id="movie.id" :description="movie.description">
-            {{ movie.title }} -- {{movie.description}}
+          <li
+            v-for="movie in moviesArr"
+            :key="movie"
+            :title="movie.title"
+            :id="movie.id"
+            :description="movie.description"
+          >
+            {{ movie.title }} -- {{ movie.description }}
           </li>
-  
         </ul>
-        <button
-          @click="
-            movies();
-          "
-          type="button"
-        >
-          List movies
-        </button>
+        <button @click="movies()" type="button">List movies</button>
       </div>
 
       <div v-else-if="chosenContext === 'Books'" class="book-container">
@@ -75,10 +73,12 @@
           <label for="choice">Enter book name:</label>
           <input v-model="bookInput" required type="text" />
         </div>
+
+
+        <AtomSpinner v-if="!loaded" :animation-duration="1000" :size="60" :color="'#474646'" />
         <ul
-          v-if="
-            chosenContext ===  'Books' &&
-            (booksArr != undefined || booksArr != null)
+          v-else-if="
+            chosenContext === 'Books' && loaded   
           "
         >
           <li
@@ -88,18 +88,12 @@
             :author="book.volumeInfo.authors[0]"
             :publisher="book.volumeInfo.publisher"
           >
-            {{ book.volumeInfo.title}} by
-            {{ book.volumeInfo.authors[0]}}
+            {{ book.volumeInfo.title }} by
+            {{ book.volumeInfo.authors[0] }}
           </li>
-        </ul> 
-        <button
-          @click="
-           books();
-          "
-          type="button"
-        >
-          List Books or Authors
-        </button>
+        </ul>
+        
+        <button @click="books()" type="button">List Books or Authors</button>
       </div>
 
       <div class="input-area">
@@ -112,45 +106,47 @@
 </template>
 
 <script>
-// import ListElements from "./ListElements.vue";
-//import vSelect from 'vue-select';
+import { AtomSpinner } from "epic-spinners";
 
 export default {
   name: "NewPost",
-  components: {},
+  components: {
+    AtomSpinner,
+  },
   data() {
     return {
       contexts: ["Select category", "Movies", "Books", "Song/Artists"],
       chosenContext: "",
       songInput: "",
       movieInput: "",
-      bookInput:"",
+      bookInput: "",
       songArr: [],
       moviesArr: [],
-      booksArr:[]
+      booksArr: [],
+      loaded:true
     };
   },
   methods: {
     async songs() {
-      console.log(this.songArr);
+      this.loaded = false;
       this.songArr = await this.$store.dispatch("getSongs", this.songInput);
       this.songInput = "";
+      this.loaded = true;
     },
     async movies() {
+      this.loaded = false;
       this.moviesArr = await this.$store.dispatch("getMovies", this.movieInput);
-      console.log(this.moviesArr);
       this.movieInput = "";
+      this.loaded = true;
     },
     async books() {
-      
+      this.loaded = false;
       this.booksArr = await this.$store.dispatch("getBooks", this.bookInput);
-      console.log(this.booksArr);
       this.bookInput = "";
+      this.loaded = true;
     },
   },
-  computed: {
-    
-  },
+  computed: {},
   watch: {
     selected: {
       handler: function () {
@@ -164,6 +160,40 @@ export default {
 </script>
 
 <style scoped lang="scss">
+
+
+/* SCSS HEX */
+$blue-jeans: #0aa9ffff;
+$medium-purple: #8a80f9ff;
+$lavender-blue: #cebff7ff;
+$silver-pink: #cdb1b9ff;
+$roman-silver: #83858cff;
+
+/* SCSS HSL */
+$blue-jeans: hsla(201, 100%, 52%, 1);
+$medium-purple: hsla(245, 91%, 74%, 1);
+$lavender-blue: hsla(256, 78%, 86%, 1);
+$silver-pink: hsla(343, 22%, 75%, 1);
+$roman-silver: hsla(227, 4%, 53%, 1);
+
+/* SCSS RGB */
+$blue-jeans: rgba(10, 169, 255, 1);
+$medium-purple: rgba(138, 128, 249, 1);
+$lavender-blue: rgba(206, 191, 247, 1);
+$silver-pink: rgba(205, 177, 185, 1);
+$roman-silver: rgba(131, 133, 140, 1);
+
+/* SCSS Gradient */
+$gradient-top: linear-gradient(0deg, #0aa9ffff, #8a80f9ff, #cebff7ff, #cdb1b9ff, #83858cff);
+$gradient-right: linear-gradient(90deg, #0aa9ffff, #8a80f9ff, #cebff7ff, #cdb1b9ff, #83858cff);
+$gradient-bottom: linear-gradient(180deg, #0aa9ffff, #8a80f9ff, #cebff7ff, #cdb1b9ff, #83858cff);
+$gradient-left: linear-gradient(270deg, #0aa9ffff, #8a80f9ff, #cebff7ff, #cdb1b9ff, #83858cff);
+$gradient-top-right: linear-gradient(45deg, #0aa9ffff, #8a80f9ff, #cebff7ff, #cdb1b9ff, #83858cff);
+$gradient-bottom-right: linear-gradient(135deg, #0aa9ffff, #8a80f9ff, #cebff7ff, #cdb1b9ff, #83858cff);
+$gradient-top-left: linear-gradient(225deg, #0aa9ffff, #8a80f9ff, #cebff7ff, #cdb1b9ff, #83858cff);
+$gradient-bottom-left: linear-gradient(315deg, #0aa9ffff, #8a80f9ff, #cebff7ff, #cdb1b9ff, #83858cff);
+$gradient-radial: radial-gradient(#0aa9ffff, #8a80f9ff, #cebff7ff, #cdb1b9ff, #83858cff);
+
 ul {
   display: flex;
   flex-direction: column;
@@ -173,8 +203,11 @@ ul {
   padding-left: 0;
   max-width: 50%;
   li {
+    text-align: left;
+    min-width: 50px;
+    background: $lavender-blue;
     padding: 5px;
-    margin: 5px;
+    color: #ffffff;
     list-style: none;
   }
 }
@@ -196,9 +229,10 @@ ul {
   }
 }
 .book-container {
+  border: 1px solid grey;
   display: flex;
   flex-direction: column;
-  max-width: 50%;
+  min-width: 60%;
   align-items: flex-start;
   & .mini-book-container {
     display: flex;
@@ -322,7 +356,7 @@ label {
 .new-post {
   display: flex;
   flex-direction: column;
-  min-width: 70%;
+  min-width: 85%;
   height: auto;
   border: 0.5px solid grey;
   padding: 20px;

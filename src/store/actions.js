@@ -1,19 +1,45 @@
 import axios from "axios";
 export const getSongs = ({ commit }, track) => {
-  const options = {
-    method: "GET",
-    url: "https://shazam.p.rapidapi.com/search",
-    params: { term: `${track}`, locale: "en-US", offset: "0", limit: "5" },
-    headers: {
-      "X-RapidAPI-Key": "d6b0203059msh5165e1a7177052ap178d45jsn5660ca694bd2",
-      "X-RapidAPI-Host": "shazam.p.rapidapi.com",
-    },
-  };
+  var request = require('request'); // "Request" library
+
+var client_id = 'clientID'; // Your client id
+var client_secret = 'clientSecret'; // Your secret
+
+// your application requests authorization
+var authOptions = {
+  url: 'https://accounts.spotify.com/api/token',
+  headers: {
+    'Authorization': 'Basic ' + (new Buffer(client_id + ':' + client_secret).toString('base64'))
+  },
+  form: {
+    grant_type: 'client_credentials'
+  },
+  json: true
+};
+
+request.post(authOptions, function(error, response, body) {
+  if (!error && response.statusCode === 200) {
+
+    // use the access token to access the Spotify Web API
+    var token = body.access_token;
+    var options = {
+      url: 'https://api.spotify.com/v1/users/jmperezperez',
+      headers: {
+        'Authorization': 'Bearer ' + token
+      },
+      json: true
+    };
+    request.get(options, function(error, response, body) {
+      console.log(body);
+    });
+  }
+});
   return axios
     .request(options)
     .then(function (response) {
-      commit("SET_SONGS", response.tracks.hits);
-      return response.tracks.hits;
+      console.log(response.data.tracks);
+      commit("SET_SONGS", response.data.tracks);
+      return response.data.tracks;
     })
     .catch(function (error) {
       console.error(error);
@@ -22,7 +48,7 @@ export const getSongs = ({ commit }, track) => {
 export const getMovies = ({ commit }, movieName) => {
   if (movieName != " " || movieName != "") {
     return axios
-      .get(`https://imdb-api.com/en/API/SearchTitle/k_l4j6isbb/${movieName}`)
+      .get(`https://imdb-api.com/en/API/SearchTitle/--TOKEN--/${movieName}`)
       .then(function (response) {
         commit("SET_MOVIES", response.data.results);
         return response.data.results;
@@ -37,7 +63,7 @@ export const getMovies = ({ commit }, movieName) => {
 export const getBooks = ({ commit }, bookInput) => {
   return axios
     .get(
-      `https://www.googleapis.com/books/v1/volumes?q=${bookInput}&printType=all&key=AIzaSyCWEqSK3LFYVNNx0OWLXq6BC77uX1wWzlQ&maxResults=5&country=US`
+      `https://www.googleapis.com/books/v1/volumes?q=${bookInput}&printType=all&key=--TOKEN--&maxResults=5&country=US`
     )
     .then(function (response) {
       commit("SET_BOOKS", response.data.items);
