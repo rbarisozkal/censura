@@ -47,7 +47,7 @@
       <div v-else-if="chosenContext === 'Movies'" class="movie-container">
         <div class="mini-container">
           <label for="choice">Enter movie name:</label>
-          <input v-model="movieInput" type="text" />
+          <input v-model="movieInput" @keyup="movies()" type="text" />
         </div>
         <ul
           v-if="
@@ -61,10 +61,18 @@
             :title="movie.title"
             :id="movie.id"
             :description="movie.description"
+            @click="selectListElement"
           >
             {{ movie.title }} -- {{ movie.description }}
           </li>
         </ul>
+        <!-- IF WE STUCK ON SELECTING LIST ELEMENTS WE CAN USE SELECT-OPTIONS TAG TO GET DATA -->
+        <!-- <select @change="(e) => (movieInput = e.target.value)">
+          <option disabled value="">Please select one</option>
+          <option :value="movie.title" v-for="movie in moviesArr" :key="movie">
+            {{ movie.title }} -- {{ movie.description }}
+          </option>
+        </select> -->
         <button @click="movies()" type="button">List movies</button>
       </div>
 
@@ -97,15 +105,20 @@
       </div>
 
       <div class="input-area">
-        <textarea v-model="postDetails" class="post-context" type="" name="input"></textarea>
+        <textarea
+          v-model="postDetails"
+          class="post-context"
+          type=""
+          name="input"
+        ></textarea>
       </div>
 
-     <button id="postButton" type="button" @click="newPost">CENSURA!</button>
+      <button id="postButton" type="button" @click="newPost">CENSURA!</button>
     </form>
 
     <div>
       <ul>
-        <li v-for="cr in critiques" :key="cr">{{cr.postDetails}}</li>
+        <li v-for="cr in critiques" :key="cr">{{ cr.postDetails }}</li>
       </ul>
     </div>
   </div>
@@ -113,7 +126,7 @@
 
 <script>
 import { AtomSpinner } from "epic-spinners";
-
+import "vue-select/dist/vue-select.css";
 export default {
   name: "NewPost",
   components: {
@@ -131,9 +144,19 @@ export default {
       booksArr: [],
       loaded: true,
       critiques: [],
+      selectedItemCount: 0,
     };
   },
   methods: {
+    selectListElement(e) {
+      const element = e.target;
+      this.selectedItemCount++;
+      if (element.classList.contains("selected")) {
+        element.classList.remove("selected");
+      }else{
+        element.classList.add("selected");
+      }
+    },
     async songs() {
       this.loaded = false;
       this.songArr = await this.$store.dispatch("getSongs", this.songInput);
@@ -144,7 +167,6 @@ export default {
     async movies() {
       this.loaded = false;
       this.moviesArr = await this.$store.dispatch("getMovies", this.movieInput);
-      this.movieInput = "";
       this.loaded = true;
     },
     async books() {
@@ -163,9 +185,15 @@ export default {
     },
   },
   computed: {
-   returnCritiquesArray(){
+    returnCritiquesArray() {
       return this.critiques;
-   }
+    },
+    returnMovieArray() {
+      return this.moviesArr;
+    },
+    returnSelectedItemCount() {
+      return this.selectedItemCount;
+    },
   },
   watch: {
     selected: {
@@ -181,6 +209,9 @@ export default {
 
 <style scoped lang="scss">
 /* SCSS HEX */
+.selected {
+  background: red;
+}
 $blue-jeans: #0aa9ffff;
 $medium-purple: #8a80f9ff;
 $lavender-blue: #cebff7ff;
@@ -201,94 +232,27 @@ $lavender-blue: rgba(206, 191, 247, 1);
 $silver-pink: rgba(205, 177, 185, 1);
 $roman-silver: rgba(131, 133, 140, 1);
 
-/* SCSS Gradient */
-$gradient-top: linear-gradient(
-  0deg,
-  #0aa9ffff,
-  #8a80f9ff,
-  #cebff7ff,
-  #cdb1b9ff,
-  #83858cff
-);
-$gradient-right: linear-gradient(
-  90deg,
-  #0aa9ffff,
-  #8a80f9ff,
-  #cebff7ff,
-  #cdb1b9ff,
-  #83858cff
-);
-$gradient-bottom: linear-gradient(
-  180deg,
-  #0aa9ffff,
-  #8a80f9ff,
-  #cebff7ff,
-  #cdb1b9ff,
-  #83858cff
-);
-$gradient-left: linear-gradient(
-  270deg,
-  #0aa9ffff,
-  #8a80f9ff,
-  #cebff7ff,
-  #cdb1b9ff,
-  #83858cff
-);
-$gradient-top-right: linear-gradient(
-  45deg,
-  #0aa9ffff,
-  #8a80f9ff,
-  #cebff7ff,
-  #cdb1b9ff,
-  #83858cff
-);
-$gradient-bottom-right: linear-gradient(
-  135deg,
-  #0aa9ffff,
-  #8a80f9ff,
-  #cebff7ff,
-  #cdb1b9ff,
-  #83858cff
-);
-$gradient-top-left: linear-gradient(
-  225deg,
-  #0aa9ffff,
-  #8a80f9ff,
-  #cebff7ff,
-  #cdb1b9ff,
-  #83858cff
-);
-$gradient-bottom-left: linear-gradient(
-  315deg,
-  #0aa9ffff,
-  #8a80f9ff,
-  #cebff7ff,
-  #cdb1b9ff,
-  #83858cff
-);
-$gradient-radial: radial-gradient(
-  #0aa9ffff,
-  #8a80f9ff,
-  #cebff7ff,
-  #cdb1b9ff,
-  #83858cff
-);
-
 ul {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-
+  background: $lavender-blue;
   margin-top: 0;
   padding-left: 0;
   max-width: 50%;
+
   li {
     text-align: left;
-    min-width: 50px;
-    background: $lavender-blue;
-    padding: 5px;
+    min-width: 100%;
+
+    padding: 0 0 5px 5px;
     color: #ffffff;
     list-style: none;
+    transition: 0.3s;
+    &:hover {
+      opacity: 0.5;
+      background-color: lightgray;
+    }
   }
 }
 .songInfo {
