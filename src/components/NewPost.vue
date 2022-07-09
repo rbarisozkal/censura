@@ -26,10 +26,15 @@
             List Songs
           </button>
         </div>
+        <AtomSpinner
+          v-if="!loaded"
+          :animation-duration="1000"
+          :size="60"
+          :color="'#474646'"
+        />
         <ul
           v-if="
-            chosenContext === 'Song/Artists' &&
-            (songArr != undefined || songArr != null)
+            chosenContext === 'Song/Artists' && loaded
           "
         >
           <li
@@ -49,10 +54,16 @@
           <label for="choice">Enter movie name:</label>
           <input v-model="movieInput" @keyup="movies()" type="text" />
         </div>
+        <AtomSpinner
+          v-if="!loaded"
+          :animation-duration="1000"
+          :size="60"
+          :color="'#474646'"
+        />
         <ul
           v-if="
             chosenContext === 'Movies' &&
-            (moviesArr != undefined || moviesArr != null)
+            loaded
           "
         >
           <li
@@ -73,13 +84,13 @@
             {{ movie.title }} -- {{ movie.description }}
           </option>
         </select> -->
-        <button @click="movies()" type="button">List movies</button>
+       
       </div>
 
       <div v-else-if="chosenContext === 'Books'" class="book-container">
         <div class="mini-book-container">
           <label for="choice">Enter book name:</label>
-          <input v-model="bookInput" required type="text" />
+          <input @keyup="books()" v-model="bookInput" required type="text" />
         </div>
 
         <AtomSpinner
@@ -95,13 +106,14 @@
             :title="book.volumeInfo.title"
             :author="book.volumeInfo.authors[0]"
             :publisher="book.volumeInfo.publisher"
+            @click="selectListElement"
           >
             {{ book.volumeInfo.title }} by
             {{ book.volumeInfo.authors[0] }}
           </li>
         </ul>
 
-        <button @click="books()" type="button">List Books or Authors</button>
+        
       </div>
 
       <div class="input-area">
@@ -161,7 +173,7 @@ export default {
       this.loaded = false;
       this.songArr = await this.$store.dispatch("getSongs", this.songInput);
       console.log(this.songArr);
-      this.songInput = "";
+      
       this.loaded = true;
     },
     async movies() {
@@ -172,7 +184,7 @@ export default {
     async books() {
       this.loaded = false;
       this.booksArr = await this.$store.dispatch("getBooks", this.bookInput);
-      this.bookInput = "";
+      
       this.loaded = true;
     },
     newPost(userName, chosenContext, postDetails) {
@@ -182,6 +194,9 @@ export default {
         postDetails: postDetails,
       };
       this.critiques.push(newPost);
+      this.bookInput = "";
+      this.songInput = "";
+      this.movieInput = "";
     },
   },
   computed: {
