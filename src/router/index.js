@@ -2,7 +2,6 @@ import { createRouter, createWebHistory } from "vue-router";
 import HomeView from "../views/HomeView.vue";
 // import PostsView from '../views/PostsView.vue';
 const routes = [
-
   {
     path: "/",
     name: "home",
@@ -28,13 +27,20 @@ const routes = [
       {
         path: "/postContext",
         component: null,
-        children: [{ path: "/posts", component: null ,children:[{path:'/posts/:postId',component:null}]}],
+        children: [
+          {
+            path: "/posts",
+            component: null,
+            children: [{ path: "/posts/:postId", component: null }],
+          },
+        ],
       },
     ],
   },
   {
-    path:'/:notFOund(.*)',component:null
-  }
+    path: "/:notFOund(.*)",
+    component: null,
+  },
 ];
 
 const router = createRouter({

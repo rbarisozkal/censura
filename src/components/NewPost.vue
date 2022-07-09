@@ -74,13 +74,13 @@
           <input v-model="bookInput" required type="text" />
         </div>
 
-
-        <AtomSpinner v-if="!loaded" :animation-duration="1000" :size="60" :color="'#474646'" />
-        <ul
-          v-else-if="
-            chosenContext === 'Books' && loaded   
-          "
-        >
+        <AtomSpinner
+          v-if="!loaded"
+          :animation-duration="1000"
+          :size="60"
+          :color="'#474646'"
+        />
+        <ul v-else-if="chosenContext === 'Books' && loaded">
           <li
             v-for="book in booksArr"
             :key="book.id"
@@ -92,16 +92,22 @@
             {{ book.volumeInfo.authors[0] }}
           </li>
         </ul>
-        
+
         <button @click="books()" type="button">List Books or Authors</button>
       </div>
 
       <div class="input-area">
-        <textarea class="post-context" type="" name="input"></textarea>
+        <textarea v-model="postDetails" class="post-context" type="" name="input"></textarea>
       </div>
 
-      <button id="postButton">CENSURA!</button>
+     <button id="postButton" type="button" @click="newPost">CENSURA!</button>
     </form>
+
+    <div>
+      <ul>
+        <li v-for="cr in critiques" :key="cr">{{cr.postDetails}}</li>
+      </ul>
+    </div>
   </div>
 </template>
 
@@ -123,13 +129,15 @@ export default {
       songArr: [],
       moviesArr: [],
       booksArr: [],
-      loaded:true
+      loaded: true,
+      critiques: [],
     };
   },
   methods: {
     async songs() {
       this.loaded = false;
       this.songArr = await this.$store.dispatch("getSongs", this.songInput);
+      console.log(this.songArr);
       this.songInput = "";
       this.loaded = true;
     },
@@ -145,8 +153,20 @@ export default {
       this.bookInput = "";
       this.loaded = true;
     },
+    newPost(userName, chosenContext, postDetails) {
+      const newPost = {
+        userName: userName,
+        chosenContext: chosenContext,
+        postDetails: postDetails,
+      };
+      this.critiques.push(newPost);
+    },
   },
-  computed: {},
+  computed: {
+   returnCritiquesArray(){
+      return this.critiques;
+   }
+  },
   watch: {
     selected: {
       handler: function () {
@@ -160,8 +180,6 @@ export default {
 </script>
 
 <style scoped lang="scss">
-
-
 /* SCSS HEX */
 $blue-jeans: #0aa9ffff;
 $medium-purple: #8a80f9ff;
@@ -184,15 +202,77 @@ $silver-pink: rgba(205, 177, 185, 1);
 $roman-silver: rgba(131, 133, 140, 1);
 
 /* SCSS Gradient */
-$gradient-top: linear-gradient(0deg, #0aa9ffff, #8a80f9ff, #cebff7ff, #cdb1b9ff, #83858cff);
-$gradient-right: linear-gradient(90deg, #0aa9ffff, #8a80f9ff, #cebff7ff, #cdb1b9ff, #83858cff);
-$gradient-bottom: linear-gradient(180deg, #0aa9ffff, #8a80f9ff, #cebff7ff, #cdb1b9ff, #83858cff);
-$gradient-left: linear-gradient(270deg, #0aa9ffff, #8a80f9ff, #cebff7ff, #cdb1b9ff, #83858cff);
-$gradient-top-right: linear-gradient(45deg, #0aa9ffff, #8a80f9ff, #cebff7ff, #cdb1b9ff, #83858cff);
-$gradient-bottom-right: linear-gradient(135deg, #0aa9ffff, #8a80f9ff, #cebff7ff, #cdb1b9ff, #83858cff);
-$gradient-top-left: linear-gradient(225deg, #0aa9ffff, #8a80f9ff, #cebff7ff, #cdb1b9ff, #83858cff);
-$gradient-bottom-left: linear-gradient(315deg, #0aa9ffff, #8a80f9ff, #cebff7ff, #cdb1b9ff, #83858cff);
-$gradient-radial: radial-gradient(#0aa9ffff, #8a80f9ff, #cebff7ff, #cdb1b9ff, #83858cff);
+$gradient-top: linear-gradient(
+  0deg,
+  #0aa9ffff,
+  #8a80f9ff,
+  #cebff7ff,
+  #cdb1b9ff,
+  #83858cff
+);
+$gradient-right: linear-gradient(
+  90deg,
+  #0aa9ffff,
+  #8a80f9ff,
+  #cebff7ff,
+  #cdb1b9ff,
+  #83858cff
+);
+$gradient-bottom: linear-gradient(
+  180deg,
+  #0aa9ffff,
+  #8a80f9ff,
+  #cebff7ff,
+  #cdb1b9ff,
+  #83858cff
+);
+$gradient-left: linear-gradient(
+  270deg,
+  #0aa9ffff,
+  #8a80f9ff,
+  #cebff7ff,
+  #cdb1b9ff,
+  #83858cff
+);
+$gradient-top-right: linear-gradient(
+  45deg,
+  #0aa9ffff,
+  #8a80f9ff,
+  #cebff7ff,
+  #cdb1b9ff,
+  #83858cff
+);
+$gradient-bottom-right: linear-gradient(
+  135deg,
+  #0aa9ffff,
+  #8a80f9ff,
+  #cebff7ff,
+  #cdb1b9ff,
+  #83858cff
+);
+$gradient-top-left: linear-gradient(
+  225deg,
+  #0aa9ffff,
+  #8a80f9ff,
+  #cebff7ff,
+  #cdb1b9ff,
+  #83858cff
+);
+$gradient-bottom-left: linear-gradient(
+  315deg,
+  #0aa9ffff,
+  #8a80f9ff,
+  #cebff7ff,
+  #cdb1b9ff,
+  #83858cff
+);
+$gradient-radial: radial-gradient(
+  #0aa9ffff,
+  #8a80f9ff,
+  #cebff7ff,
+  #cdb1b9ff,
+  #83858cff
+);
 
 ul {
   display: flex;

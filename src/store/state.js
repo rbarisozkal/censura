@@ -1,4 +1,5 @@
 export default{
     songs:[],
-    movies:[]
+    movies:[],
+    books:[]
 }
