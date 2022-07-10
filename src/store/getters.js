@@ -1,3 +1,3 @@
-export const getSongState= (state) =>{
-    return state.songs;
+export const getMovieState= (state) =>{
+    return state.movies;
 }

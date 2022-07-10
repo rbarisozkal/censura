@@ -32,11 +32,7 @@
           :size="60"
           :color="'#474646'"
         />
-        <ul
-          v-if="
-            chosenContext === 'Song/Artists' && loaded
-          "
-        >
+        <ul v-if="chosenContext === 'Song/Artists' && loaded">
           <li
             v-for="song in songArr.items"
             :key="song.id"
@@ -52,7 +48,7 @@
       <div v-else-if="chosenContext === 'Movies'" class="movie-container">
         <div class="mini-container">
           <label for="choice">Enter movie name:</label>
-          <input v-model="movieInput" @keyup="movies()" type="text" />
+           <input v-model="movieInput" @keyup="movies()" type="text" /> 
         </div>
         <AtomSpinner
           v-if="!loaded"
@@ -60,12 +56,7 @@
           :size="60"
           :color="'#474646'"
         />
-        <ul
-          v-if="
-            chosenContext === 'Movies' &&
-            loaded
-          "
-        >
+        <ul v-if="chosenContext === 'Movies' && loaded">
           <li
             v-for="movie in moviesArr"
             :key="movie"
@@ -78,13 +69,14 @@
           </li>
         </ul>
         <!-- IF WE STUCK ON SELECTING LIST ELEMENTS WE CAN USE SELECT-OPTIONS TAG TO GET DATA -->
-        <!-- <select @change="(e) => (movieInput = e.target.value)">
+        <select @change="(e) => (movieInput = e.target.value)">
           <option disabled value="">Please select one</option>
           <option :value="movie.title" v-for="movie in moviesArr" :key="movie">
             {{ movie.title }} -- {{ movie.description }}
           </option>
-        </select> -->
-       
+        </select>
+        {{ JSON.stringify(moviesArr) }}
+        <v-select @input="movies" :options="moviesArr"></v-select>
       </div>
 
       <div v-else-if="chosenContext === 'Books'" class="book-container">
@@ -106,14 +98,16 @@
             :title="book.volumeInfo.title"
             :author="book.volumeInfo.authors[0]"
             :publisher="book.volumeInfo.publisher"
-            @click="selectListElement"
+            :ref="book.id"
+            @click="
+              selectListElement();
+              unselectListElement();
+            "
           >
             {{ book.volumeInfo.title }} by
             {{ book.volumeInfo.authors[0] }}
           </li>
         </ul>
-
-        
       </div>
 
       <div class="input-area">
@@ -138,11 +132,13 @@
 
 <script>
 import { AtomSpinner } from "epic-spinners";
+import vSelect from "vue-select";
 import "vue-select/dist/vue-select.css";
 export default {
   name: "NewPost",
   components: {
     AtomSpinner,
+    vSelect,
   },
   data() {
     return {
@@ -157,34 +153,49 @@ export default {
       loaded: true,
       critiques: [],
       selectedItemCount: 0,
+      selectedItemArray: [],
     };
   },
   methods: {
     selectListElement(e) {
       const element = e.target;
-      this.selectedItemCount++;
-      if (element.classList.contains("selected")) {
-        element.classList.remove("selected");
-      }else{
-        element.classList.add("selected");
+      if (this.selectedItemCount === 0) {
+        this.selectedItemCount++;
+        if (!element.classList.contains("selected")) {
+          element.classList.add("selected");
+          console.log(e.target);
+          this.selectedItemArray.push(e.target);
+        }
       }
     },
+    unselectListElement(e) {
+      const element = e.target;
+      this.selectedItemCount--;
+      if (element.classList.contains("selected")) {
+        element.classList.remove("selected");
+        console.log(e.target);
+        this.selectedItemArray.pop();
+      }
+    },
+
     async songs() {
       this.loaded = false;
       this.songArr = await this.$store.dispatch("getSongs", this.songInput);
       console.log(this.songArr);
-      
+
       this.loaded = true;
     },
-    async movies() {
+    async movies(e) {
       this.loaded = false;
-      this.moviesArr = await this.$store.dispatch("getMovies", this.movieInput);
+      console.log(e.data)
+      this.moviesArr = await this.$store.dispatch("getMovies",e.data);
+      
       this.loaded = true;
     },
     async books() {
       this.loaded = false;
       this.booksArr = await this.$store.dispatch("getBooks", this.bookInput);
-      
+
       this.loaded = true;
     },
     newPost(userName, chosenContext, postDetails) {
