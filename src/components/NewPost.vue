@@ -48,7 +48,6 @@
       <div v-else-if="chosenContext === 'Movies'" class="movie-container">
         <div class="mini-container">
           <label for="choice">Enter movie name:</label>
-           <input v-model="movieInput" @keyup="movies()" type="text" /> 
         </div>
         <AtomSpinner
           v-if="!loaded"
@@ -56,27 +55,36 @@
           :size="60"
           :color="'#474646'"
         />
-        <ul v-if="chosenContext === 'Movies' && loaded">
+        <!-- <ul v-if="chosenContext === 'Movies' && loaded">
           <li
             v-for="movie in moviesArr"
             :key="movie"
             :title="movie.title"
             :id="movie.id"
             :description="movie.description"
-            @click="selectListElement"
+          
           >
             {{ movie.title }} -- {{ movie.description }}
           </li>
-        </ul>
+        </ul> -->
         <!-- IF WE STUCK ON SELECTING LIST ELEMENTS WE CAN USE SELECT-OPTIONS TAG TO GET DATA -->
-        <select @change="(e) => (movieInput = e.target.value)">
+        <!--<select @change="(e) => (movieInput = e.target.value)">
           <option disabled value="">Please select one</option>
           <option :value="movie.title" v-for="movie in moviesArr" :key="movie">
             {{ movie.title }} -- {{ movie.description }}
           </option>
-        </select>
-        {{ JSON.stringify(moviesArr) }}
-        <v-select @input="movies" :options="moviesArr"></v-select>
+        </select>-->
+
+        <multiselect
+          @loading="loaded"
+          :searchable="true"
+          v-model="selectedMovies"
+          :delay="0"
+          :options="async (query) => {
+      return movies(query)
+    }"
+        >
+        </multiselect>
       </div>
 
       <div v-else-if="chosenContext === 'Books'" class="book-container">
@@ -112,7 +120,7 @@
 
       <div class="input-area">
         <textarea
-          v-model="postDetails"
+          v-model="postBody"
           class="post-context"
           type=""
           name="input"
@@ -121,24 +129,19 @@
 
       <button id="postButton" type="button" @click="newPost">CENSURA!</button>
     </form>
-
-    <div>
-      <ul>
-        <li v-for="cr in critiques" :key="cr">{{ cr.postDetails }}</li>
-      </ul>
-    </div>
   </div>
 </template>
 
 <script>
 import { AtomSpinner } from "epic-spinners";
-import vSelect from "vue-select";
+
+import Multiselect from "@vueform/multiselect";
 import "vue-select/dist/vue-select.css";
 export default {
   name: "NewPost",
   components: {
     AtomSpinner,
-    vSelect,
+    Multiselect,
   },
   data() {
     return {
@@ -151,46 +154,24 @@ export default {
       moviesArr: [],
       booksArr: [],
       loaded: true,
-      critiques: [],
-      selectedItemCount: 0,
-      selectedItemArray: [],
+      selectedMovies: [],
+      postBody: "",
     };
   },
   methods: {
-    selectListElement(e) {
-      const element = e.target;
-      if (this.selectedItemCount === 0) {
-        this.selectedItemCount++;
-        if (!element.classList.contains("selected")) {
-          element.classList.add("selected");
-          console.log(e.target);
-          this.selectedItemArray.push(e.target);
-        }
-      }
-    },
-    unselectListElement(e) {
-      const element = e.target;
-      this.selectedItemCount--;
-      if (element.classList.contains("selected")) {
-        element.classList.remove("selected");
-        console.log(e.target);
-        this.selectedItemArray.pop();
-      }
-    },
-
     async songs() {
       this.loaded = false;
       this.songArr = await this.$store.dispatch("getSongs", this.songInput);
       console.log(this.songArr);
-
       this.loaded = true;
     },
     async movies(e) {
       this.loaded = false;
-      console.log(e.data)
-      this.moviesArr = await this.$store.dispatch("getMovies",e.data);
+
+      this.moviesArr = await this.$store.dispatch("getMovies",e);
       
       this.loaded = true;
+       
     },
     async books() {
       this.loaded = false;
@@ -198,29 +179,8 @@ export default {
 
       this.loaded = true;
     },
-    newPost(userName, chosenContext, postDetails) {
-      const newPost = {
-        userName: userName,
-        chosenContext: chosenContext,
-        postDetails: postDetails,
-      };
-      this.critiques.push(newPost);
-      this.bookInput = "";
-      this.songInput = "";
-      this.movieInput = "";
-    },
   },
-  computed: {
-    returnCritiquesArray() {
-      return this.critiques;
-    },
-    returnMovieArray() {
-      return this.moviesArr;
-    },
-    returnSelectedItemCount() {
-      return this.selectedItemCount;
-    },
-  },
+  computed: {},
   watch: {
     selected: {
       handler: function () {
@@ -232,7 +192,8 @@ export default {
   },
 };
 </script>
-
+<style src="@vueform/multiselect/themes/default.css"></style>
+<style src="vue-multiselect/dist/vue-multiselect.css"></style>
 <style scoped lang="scss">
 /* SCSS HEX */
 .selected {
