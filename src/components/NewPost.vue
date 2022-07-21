@@ -48,7 +48,7 @@
       <div v-else-if="chosenContext === 'Movies'" class="movie-container">
         <div class="mini-container">
           <label for="choice">Enter movie name:</label>
-           <input v-model="movieInput" @keyup="movies()" type="text" /> 
+          <input v-model="movieInput" @keyup="movies()" type="text" />
         </div>
         <AtomSpinner
           v-if="!loaded"
@@ -68,15 +68,24 @@
             {{ movie.title }} -- {{ movie.description }}
           </li>
         </ul>
+
         <!-- IF WE STUCK ON SELECTING LIST ELEMENTS WE CAN USE SELECT-OPTIONS TAG TO GET DATA -->
-        <select @change="(e) => (movieInput = e.target.value)">
+        <!-- <select @change="(e) => (movieInput = e.target.value)">
           <option disabled value="">Please select one</option>
           <option :value="movie.title" v-for="movie in moviesArr" :key="movie">
             {{ movie.title }} -- {{ movie.description }}
           </option>
-        </select>
-        {{ JSON.stringify(moviesArr) }}
-        <v-select @input="movies" :options="moviesArr"></v-select>
+        </select> -->
+
+        <vSelect
+          @search="
+            (search, loading) => {
+              loading(true);
+              movies(search).then(() => loading(false));
+            }
+          " v-model="search" :options="moviesArr"
+          :get-option-label="(option) => option.title"
+        ></vSelect>
       </div>
 
       <div v-else-if="chosenContext === 'Books'" class="book-container">
@@ -122,18 +131,15 @@
       <button id="postButton" type="button" @click="newPost">CENSURA!</button>
     </form>
 
-    <div>
-      <ul>
-        <li v-for="cr in critiques" :key="cr">{{ cr.postDetails }}</li>
-      </ul>
-    </div>
+    
   </div>
 </template>
 
 <script>
+import "vue-select/dist/vue-select.css";
 import { AtomSpinner } from "epic-spinners";
 import vSelect from "vue-select";
-import "vue-select/dist/vue-select.css";
+
 export default {
   name: "NewPost",
   components: {
@@ -154,30 +160,10 @@ export default {
       critiques: [],
       selectedItemCount: 0,
       selectedItemArray: [],
+      option: "",
     };
   },
   methods: {
-    selectListElement(e) {
-      const element = e.target;
-      if (this.selectedItemCount === 0) {
-        this.selectedItemCount++;
-        if (!element.classList.contains("selected")) {
-          element.classList.add("selected");
-          console.log(e.target);
-          this.selectedItemArray.push(e.target);
-        }
-      }
-    },
-    unselectListElement(e) {
-      const element = e.target;
-      this.selectedItemCount--;
-      if (element.classList.contains("selected")) {
-        element.classList.remove("selected");
-        console.log(e.target);
-        this.selectedItemArray.pop();
-      }
-    },
-
     async songs() {
       this.loaded = false;
       this.songArr = await this.$store.dispatch("getSongs", this.songInput);
@@ -185,11 +171,9 @@ export default {
 
       this.loaded = true;
     },
-    async movies(e) {
+    async movies(search) {
       this.loaded = false;
-      console.log(e.data)
-      this.moviesArr = await this.$store.dispatch("getMovies",e.data);
-      
+      this.moviesArr = await this.$store.dispatch("getMovies", search);
       this.loaded = true;
     },
     async books() {
@@ -197,17 +181,6 @@ export default {
       this.booksArr = await this.$store.dispatch("getBooks", this.bookInput);
 
       this.loaded = true;
-    },
-    newPost(userName, chosenContext, postDetails) {
-      const newPost = {
-        userName: userName,
-        chosenContext: chosenContext,
-        postDetails: postDetails,
-      };
-      this.critiques.push(newPost);
-      this.bookInput = "";
-      this.songInput = "";
-      this.movieInput = "";
     },
   },
   computed: {
@@ -233,6 +206,7 @@ export default {
 };
 </script>
 
+<style src="vue-multiselect/dist/vue-multiselect.min.css"></style>
 <style scoped lang="scss">
 /* SCSS HEX */
 .selected {

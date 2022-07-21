@@ -22,6 +22,7 @@ export const getMovies = ({ commit }, movieName) => {
     return axios
       .get(`https://imdb-api.com/en/API/SearchTitle/k_l4j6isbb/${movieName}`)
       .then(function (response) {
+        //create new propertie called "code" for each movie
         commit("SET_MOVIES", response.data.results);
         return response.data.results;
       })
