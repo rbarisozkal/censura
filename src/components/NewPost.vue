@@ -48,7 +48,6 @@
       <div v-else-if="chosenContext === 'Movies'" class="movie-container">
         <div class="mini-container">
           <label for="choice">Enter movie name:</label>
-          <input v-model="movieInput" @keyup="movies()" type="text" />
         </div>
         <AtomSpinner
           v-if="!loaded"
@@ -56,26 +55,6 @@
           :size="60"
           :color="'#474646'"
         />
-        <ul v-if="chosenContext === 'Movies' && loaded">
-          <li
-            v-for="movie in moviesArr"
-            :key="movie"
-            :title="movie.title"
-            :id="movie.id"
-            :description="movie.description"
-            @click="selectListElement"
-          >
-            {{ movie.title }} -- {{ movie.description }}
-          </li>
-        </ul>
-
-        <!-- IF WE STUCK ON SELECTING LIST ELEMENTS WE CAN USE SELECT-OPTIONS TAG TO GET DATA -->
-        <!-- <select @change="(e) => (movieInput = e.target.value)">
-          <option disabled value="">Please select one</option>
-          <option :value="movie.title" v-for="movie in moviesArr" :key="movie">
-            {{ movie.title }} -- {{ movie.description }}
-          </option>
-        </select> -->
 
         <vSelect
           @search="
@@ -121,7 +100,7 @@
 
       <div class="input-area">
         <textarea
-          v-model="postDetails"
+          v-model="postBody"
           class="post-context"
           type=""
           name="input"
@@ -129,9 +108,7 @@
       </div>
 
       <button id="postButton" type="button" @click="newPost">CENSURA!</button>
-    </form>
-
-    
+    </form>  
   </div>
 </template>
 
@@ -144,7 +121,7 @@ export default {
   name: "NewPost",
   components: {
     AtomSpinner,
-    vSelect,
+    Multiselect,
   },
   data() {
     return {
@@ -158,8 +135,6 @@ export default {
       booksArr: [],
       loaded: true,
       critiques: [],
-      selectedItemCount: 0,
-      selectedItemArray: [],
       option: "",
     };
   },
@@ -168,13 +143,13 @@ export default {
       this.loaded = false;
       this.songArr = await this.$store.dispatch("getSongs", this.songInput);
       console.log(this.songArr);
-
       this.loaded = true;
     },
     async movies(search) {
       this.loaded = false;
       this.moviesArr = await this.$store.dispatch("getMovies", search);
       this.loaded = true;
+       
     },
     async books() {
       this.loaded = false;
@@ -183,17 +158,7 @@ export default {
       this.loaded = true;
     },
   },
-  computed: {
-    returnCritiquesArray() {
-      return this.critiques;
-    },
-    returnMovieArray() {
-      return this.moviesArr;
-    },
-    returnSelectedItemCount() {
-      return this.selectedItemCount;
-    },
-  },
+  computed: {},
   watch: {
     selected: {
       handler: function () {
