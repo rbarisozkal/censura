@@ -3,100 +3,15 @@
     <form action="">
       <h3 class="post-header">What do you want to talk about>></h3>
       <div class="labels">
-        <select @change="(e) => (chosenContext = e.target.value)">
-          <option :value="context" v-for="context in contexts" :key="context">
+        <select v-model="chosenContext">
+          <option  v-for="context in contexts" :key="context">
             {{ context }}
           </option>
         </select>
       </div>
 
-      <div v-if="chosenContext === 'Song/Artists'" class="music-container">
-        <div class="songInfo">
-          <label for="choice">By song name or by artist?</label>
-          <div class="mini-container">
-            <label for="artist">Artist?</label>
-            <input type="checkbox" value="artistChoice" />
-            <label for="song">Song?</label>
-            <input type="checkbox" value="songChoice" />
-          </div>
-          <label for="song">Enter song name: </label>
-          <input v-model="songInput" type="text" />
-
-          <button class="songs" @click="songs()" type="button">
-            List Songs
-          </button>
-        </div>
-        <AtomSpinner
-          v-if="!loaded"
-          :animation-duration="1000"
-          :size="60"
-          :color="'#474646'"
-        />
-        <ul v-if="chosenContext === 'Song/Artists' && loaded">
-          <li
-            v-for="song in songArr.items"
-            :key="song.id"
-            :track="song.name"
-            :artist="song.artists[0].name"
-          >
-            {{ song.name }} by
-            {{ song.artists[0].name }}
-          </li>
-        </ul>
-      </div>
-
-      <div v-else-if="chosenContext === 'Movies'" class="movie-container">
-        <div class="mini-container">
-          <label for="choice">Enter movie name:</label>
-        </div>
-        <AtomSpinner
-          v-if="!loaded"
-          :animation-duration="1000"
-          :size="60"
-          :color="'#474646'"
-        />
-
-        <vSelect
-          @search="
-            (search, loading) => {
-              loading(true);
-              movies(search).then(() => loading(false));
-            }
-          " v-model="search" :options="moviesArr"
-          :get-option-label="(option) => option.title"
-        ></vSelect>
-      </div>
-
-      <div v-else-if="chosenContext === 'Books'" class="book-container">
-        <div class="mini-book-container">
-          <label for="choice">Enter book name:</label>
-          <input @keyup="books()" v-model="bookInput" required type="text" />
-        </div>
-
-        <AtomSpinner
-          v-if="!loaded"
-          :animation-duration="1000"
-          :size="60"
-          :color="'#474646'"
-        />
-        <ul v-else-if="chosenContext === 'Books' && loaded">
-          <li
-            v-for="book in booksArr"
-            :key="book.id"
-            :title="book.volumeInfo.title"
-            :author="book.volumeInfo.authors[0]"
-            :publisher="book.volumeInfo.publisher"
-            :ref="book.id"
-            @click="
-              selectListElement();
-              unselectListElement();
-            "
-          >
-            {{ book.volumeInfo.title }} by
-            {{ book.volumeInfo.authors[0] }}
-          </li>
-        </ul>
-      </div>
+    <PostDetails :context="chosenContext"/>
+      
 
       <div class="input-area">
         <textarea
@@ -113,61 +28,26 @@
 </template>
 
 <script>
-import "vue-select/dist/vue-select.css";
-import { AtomSpinner } from "epic-spinners";
-import vSelect from "vue-select";
 
+import PostDetails from '../components/PostDetails/PostDetails.vue'
 export default {
   name: "NewPost",
   components: {
-    AtomSpinner,
-    Multiselect,
+    PostDetails,
   },
   data() {
     return {
       contexts: ["Select category", "Movies", "Books", "Song/Artists"],
       chosenContext: "",
-      songInput: "",
-      movieInput: "",
-      bookInput: "",
-      songArr: [],
-      moviesArr: [],
-      booksArr: [],
-      loaded: true,
-      critiques: [],
-      option: "",
     };
   },
   methods: {
-    async songs() {
-      this.loaded = false;
-      this.songArr = await this.$store.dispatch("getSongs", this.songInput);
-      console.log(this.songArr);
-      this.loaded = true;
-    },
-    async movies(search) {
-      this.loaded = false;
-      this.moviesArr = await this.$store.dispatch("getMovies", search);
-      this.loaded = true;
-       
-    },
-    async books() {
-      this.loaded = false;
-      this.booksArr = await this.$store.dispatch("getBooks", this.bookInput);
+    newPost(){
+      console.log(this.chosenContext)
+    }
+  },
 
-      this.loaded = true;
-    },
-  },
-  computed: {},
-  watch: {
-    selected: {
-      handler: function () {
-        this.songArr;
-        this.moviesArr;
-        this.booksArr;
-      },
-    },
-  },
+  
 };
 </script>
 

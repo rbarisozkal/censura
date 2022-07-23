@@ -18,6 +18,10 @@ export const getSongs = ({ commit }, songName) => {
   });
 }
 export const getMovies = ({ commit }, movieName) => {
+  
+        
+
+  
   if (movieName != " " || movieName != "") {
     return axios
       .get(`https://imdb-api.com/en/API/SearchTitle/k_l4j6isbb/${movieName}`)
@@ -32,6 +36,8 @@ export const getMovies = ({ commit }, movieName) => {
   } else {
     console.error("Movie input is empty!");
   }
+
+  
 };
 export const getBooks = ({ commit }, bookInput) => {
   return axios
