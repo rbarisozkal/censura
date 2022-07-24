@@ -1,29 +1,14 @@
 <template>
   <div class="new-post">
-    <form action="">
-      <h3 class="post-header">What do you want to talk about>></h3>
-      <div class="labels">
-        <select v-model="chosenContext">
-          <option  v-for="context in contexts" :key="context">
-            {{ context }}
-          </option>
-        </select>
-      </div>
-
+    <h3 class="post-header">What do you want to talk about>></h3>
+    <div class="labels">
+      <select v-model="chosenContext">
+        <option v-for="context in contexts" :key="context">
+          {{ context }}
+        </option>
+      </select>
+    </div>
     <PostDetails :context="chosenContext"/>
-      
-
-      <div class="input-area">
-        <textarea
-          v-model="postBody"
-          class="post-context"
-          type=""
-          name="input"
-        ></textarea>
-      </div>
-
-      <button id="postButton" type="button" @click="newPost">CENSURA!</button>
-    </form>  
   </div>
 </template>
 
@@ -33,7 +18,7 @@ import PostDetails from '../components/PostDetails/PostDetails.vue'
 export default {
   name: "NewPost",
   components: {
-    PostDetails,
+    PostDetails
   },
   data() {
     return {
@@ -42,7 +27,7 @@ export default {
     };
   },
   methods: {
-    newPost(){
+    submitNewPost(){
       console.log(this.chosenContext)
     }
   },
@@ -54,9 +39,7 @@ export default {
 <style src="vue-multiselect/dist/vue-multiselect.min.css"></style>
 <style scoped lang="scss">
 /* SCSS HEX */
-.selected {
-  background: red;
-}
+$primary-color: #1f99cd;
 $blue-jeans: #0aa9ffff;
 $medium-purple: #8a80f9ff;
 $lavender-blue: #cebff7ff;
@@ -77,80 +60,6 @@ $lavender-blue: rgba(206, 191, 247, 1);
 $silver-pink: rgba(205, 177, 185, 1);
 $roman-silver: rgba(131, 133, 140, 1);
 
-ul {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  background: $lavender-blue;
-  margin-top: 0;
-  padding-left: 0;
-  max-width: 50%;
-
-  li {
-    text-align: left;
-    min-width: 100%;
-
-    padding: 0 0 5px 5px;
-    color: #ffffff;
-    list-style: none;
-    transition: 0.3s;
-    &:hover {
-      opacity: 0.5;
-      background-color: lightgray;
-    }
-  }
-}
-.songInfo {
-  display: flex;
-  align-items: flex-start;
-  max-width: 50%;
-  flex-direction: column;
-  margin: 0 0 1rem 0;
-  & label {
-    padding: 0 0 5px 0;
-  }
-  & span {
-    padding: 0 5px 5px 0;
-  }
-  & input {
-    padding: 0 5px 5px 0;
-    outline: none;
-  }
-}
-.book-container {
-  border: 1px solid grey;
-  display: flex;
-  flex-direction: column;
-  min-width: 60%;
-  align-items: flex-start;
-  & .mini-book-container {
-    display: flex;
-    flex-direction: column;
-    align-content: flex-start;
-    padding-bottom: 10px;
-  }
-}
-
-$primary-color: #1f99cd;
-$text-color: mix(#ffffff, $primary-color, 64%);
-.listSongsButton {
-  align-self: flex-end;
-  padding: 10px;
-  background-color: $primary-color;
-  border: none;
-  color: #ffffff;
-  cursor: pointer;
-}
-.mini-container {
-  display: flex;
-  flex-direction: row;
-  margin-top: 5px;
-  max-width: 50%;
-}
-.music-container {
-  display: flex;
-  flex-direction: row;
-}
 select {
   background-color: #1f99cd;
   background-position: right 10px center;
