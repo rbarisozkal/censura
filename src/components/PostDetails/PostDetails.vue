@@ -54,8 +54,9 @@
     </div>
 
     <div v-else-if="context === 'Books'" class="book-container">
-      <div class="mini-book-container">
+      <div class="mini-container">
         <label for="choice">Enter book name:</label>
+        </div>
         <vSelect
           @search="(bookInput, loading) => books(bookInput,loading)"
           v-model="bookInput"
@@ -63,11 +64,9 @@
           :get-option-label="(option) =>option.title"
           :filterable="true"
           :closeOnSelect="false"
-          label="volumeInfo"
           :clearSearchOnSelect="false"
-          :getOptionLabel="option.volumeInfo"
         ></vSelect>
-      </div>
+      
 
       <AtomSpinner
         v-if="!loaded"
@@ -128,6 +127,11 @@ export default {
       this.loaded = false;
       loading(true);
       this.booksArr = await this.$store.dispatch("getBooks", bookInput);
+      //add new property "title" to booksArr then initilize it to booksArr.volumeInfo.title
+      this.booksArr.forEach((book) => {
+        book.title = book.volumeInfo.title;
+      });
+      console.log(this.booksArr);
       loading(false);
       this.loaded = true;
     },
@@ -211,7 +215,7 @@ ul {
   flex-direction: column;
   min-width: 60%;
   align-items: flex-start;
-  & .mini-book-container {
+  & .mini-container {
     display: flex;
     flex-direction: column;
     align-content: flex-start;

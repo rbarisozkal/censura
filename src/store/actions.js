@@ -28,6 +28,7 @@ export const getMovies = ({ commit }, movieName) => {
         //create new propertie called "code" for each movie
        
         commit("SET_MOVIES", response.data.results);
+       
         return response.data.results;
       })
       .catch(function (error) {
@@ -43,8 +44,8 @@ export const getBooks = ({ commit }, bookInput) => {
       `https://www.googleapis.com/books/v1/volumes?q=${bookInput}&printType=all&key=AIzaSyCWEqSK3LFYVNNx0OWLXq6BC77uX1wWzlQ&maxResults=5&country=US`
     )
     .then(function (response) {
+      
       commit("SET_BOOKS", response.data.items);
-      console.log(response.data.items);
       return response.data.items;
     })
     .catch(function (error) {
