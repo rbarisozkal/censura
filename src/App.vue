@@ -19,6 +19,8 @@
       <div class="router-links">
         <router-link to="/">Home</router-link>
         <router-link to="/about">What is Censura ¿</router-link>
+        <router-link to="/signin">Sign In</router-link>
+        <router-link to="/register">Register</router-link>
       </div>
     </nav>
       <router-view class="view" id="router-view" />

@@ -1,27 +1,38 @@
 import { createRouter, createWebHistory } from "vue-router";
-import HomeView from "../views/HomeView.vue";
-// import PostsView from '../views/PostsView.vue';
+import HomeView from "../views/Home.vue";
+import SignIn from '../views/SignIn.vue';
+import Register from '../views/Register.vue';
+
 const routes = [
+   /* eslint-disable */
   {
     path: "/",
     name: "home",
     component: HomeView,
   },
   {
+    path: "/signin",
+    name: "signin",
+    component: SignIn,
+  },
+  {
+    path: "/register",
+    name: "register",
+    component: Register,
+  }
+  ,{
     path: "/about",
+    
     name: "about",
-    // route level code-splitting
-    // this generates a separate chunk (about.[hash].js) for this route
-    // which is lazy-loaded when the route is visited.
     component: function () {
-      return import("../views/AboutView.vue");
+      return import("../views/About.vue");
     },
   },
   {
-    path: "/post",
-    name: "post",
+    path: "/posts",
+    name: "posts",
     component: function () {
-      return import("../views/PostsView.vue");
+      return import("../views/Posts.vue");
     },
     children: [
       {
