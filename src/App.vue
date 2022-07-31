@@ -1,9 +1,9 @@
 <template>
-  <div class="bar">
+  <div   class="bar">
     <div class="brand">
-        <img src="./assets/icon.png" alt="icon" />
-        <router-link id="brand" to="/">censura</router-link>
-      </div>
+      <img src="./assets/icon.png" alt="icon" />
+      <router-link id="brand" to="/">censura</router-link>
+    </div>
     <router-link to="/post">
       <i class="fa-solid fa-circle-plus fa-xs"></i> New Post</router-link
     >
@@ -19,22 +19,33 @@
       <div class="router-links">
         <router-link to="/">Home</router-link>
         <router-link to="/about">What is Censura ¿</router-link>
-        <router-link to="/signin">Sign In</router-link>
+        <router-link  to="/login">Sign In</router-link>
         <router-link to="/register">Register</router-link>
+        <router-link to="/secret">Secret</router-link>
       </div>
     </nav>
-      <router-view class="view" id="router-view" />
-    
+    <router-view class="view" id="router-view" />
   </div>
 </template>
+<script>
+export default {
+  data() {
+    return {
+    };
+    //create a method to change sideBar visibility to none if route equals to /signin or /register
+  },
+  methods: {
 
+  },
+};
+</script>
 <style lang="scss">
 #router-view {
   height: 100%;
   width: 85%;
   display: flex;
 }
-.view{
+.view {
   padding-left: 20px;
 }
 #body {
@@ -43,7 +54,6 @@
   display: flex;
   flex-direction: column;
   align-self: flex-end;
-
 }
 .bar {
   width: 15%;
@@ -57,7 +67,6 @@
   font-size: 20px;
   flex-grow: 1;
   order: 1;
-
 }
 
 .bar a {

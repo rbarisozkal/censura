@@ -84,9 +84,11 @@
 </template>
 
 <script>
-import "vue-select/dist/vue-select.css";
+
+
 import { AtomSpinner } from "epic-spinners";
 import vSelect from "vue-select";
+import "vue-select/dist/vue-select.css";
 export default {
   props: {
     context: String,
@@ -127,11 +129,11 @@ export default {
       this.loaded = false;
       loading(true);
       this.booksArr = await this.$store.dispatch("getBooks", bookInput);
-      //add new property "title" to booksArr then initilize it to booksArr.volumeInfo.title
+      
       this.booksArr.forEach((book) => {
         book.title = book.volumeInfo.title;
       });
-      console.log(this.booksArr);
+ 
       loading(false);
       this.loaded = true;
     },
@@ -147,7 +149,7 @@ export default {
   },
 };
 </script>
-<style src="vue-multiselect/dist/vue-multiselect.min.css"></style>
+
 <style scoped lang="scss">
 $blue-jeans: #0aa9ffff;
 $medium-purple: #8a80f9ff;
@@ -225,14 +227,7 @@ ul {
 
 $primary-color: #1f99cd;
 $text-color: mix(#ffffff, $primary-color, 64%);
-.listSongsButton {
-  align-self: flex-end;
-  padding: 10px;
-  background-color: $primary-color;
-  border: none;
-  color: #ffffff;
-  cursor: pointer;
-}
+
 .mini-container {
   display: flex;
   flex-direction: row;

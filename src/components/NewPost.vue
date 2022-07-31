@@ -1,6 +1,6 @@
 <template>
   <div class="new-post">
-    <h3 class="post-header">What do you want to talk about>></h3>
+    <h3 class="post-header">What do you want to talk about</h3>
     <div class="labels">
       <select v-model="chosenContext">
         <option v-for="context in contexts" :key="context">
@@ -14,7 +14,7 @@
 
 <script>
 
-import PostDetails from '../components/PostDetails/PostDetails.vue'
+import PostDetails from './PostDetails/PostDetails.vue'
 export default {
   name: "NewPost",
   components: {
@@ -36,7 +36,7 @@ export default {
 };
 </script>
 
-<style src="vue-multiselect/dist/vue-multiselect.min.css"></style>
+
 <style scoped lang="scss">
 /* SCSS HEX */
 $primary-color: #1f99cd;
