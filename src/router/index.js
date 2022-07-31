@@ -3,6 +3,8 @@ import HomeView from "../views/Home.vue";
 import Login from "../views/Login.vue";
 import Register from "../views/Register.vue";
 import Secret from '../views/Secret.vue';
+import { auth } from '../data/firebase'
+
 const routes = [
   /* eslint-disable */
   {

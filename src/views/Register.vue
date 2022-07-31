@@ -1,65 +1,106 @@
 <template>
   <div class="container">
-    <form @submit="registerUser">
-      <h3>Register</h3>
-      <label> Enter an email </label>
-      <input v-model="email" type="email" name="" />
-      <label> Enter a password </label>
-      <input v-model="password" type="password" name=""  />
-      <label> Confirm password </label>
-      <input v-model="confirmPassword" type="password" name="" />
-      <label> Enter your username </label>
-      <input v-model="username" type="text" name="" />
-      <button type="button" name="button">Register</button>
-    </form>
+    <main class="login">
+		<section class="forms">
+
+			<form class="register" @submit.prevent="register">
+				<h2>Register</h2>
+				<input 
+					type="email" 
+					placeholder="Email address"
+					v-model="register_form.email" />
+				<input 
+					type="password" 
+					placeholder="Password" 
+					v-model="register_form.password" />
+				<input 
+					type="submit" 
+					value="Register" />
+			</form>
+
+			<form class="login" @submit.prevent="login">
+				<h2>Login</h2>
+				<input 
+					type="email" 
+					placeholder="Email address"
+					v-model="login_form.email" />
+				<input 
+					type="password" 
+					placeholder="Password" 
+					v-model="login_form.password" />
+				<input 
+					type="submit" 
+					value="Login" />
+			</form>
+
+		</section>
+	</main>
   </div>
 </template>
 
 <script>
-import firebase from 'firebase/compat/app';
-import 'firebase/compat/auth';
-import 'firebase/compat/firestore';
-import 'firebase/auth';
+import { ref } from 'vue'
+import { useStore } from 'vuex'
 export default {
 
-  data() {
-    return {
-      email: "",
-      password: "",
-      confirmPassword: "",
-      username: "",
-    };
-  },
-  methods:{
-    async registerUser(){
-      
-      firebase
-        .auth()
-        .createUserWithEmailAndPassword(this.email, this.password)
-        .then(() => {
-          console.log("here");
-          this.$router.replace({ name: "secret" });
-        })
-        .catch(error => (this.error = error));
-      
-    }
-  }
-};
+ setup () {
+		const login_form = ref({});
+		const register_form = ref({});
+		const store = useStore();
+		const login = () => {
+			store.dispatch('login', login_form.value);
+		}
+		const register = () => {
+			store.dispatch('register', register_form.value);
+		}
+		return {
+			login_form,
+			register_form,
+			login,
+			register
+		}
+	}
+}
 </script>
 
 <style>
-.container {
-  display: flex;
+.forms {
+	display: flex;
   flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  height: 100vh;
-  width: auto;
-  border: 0.5px solid grey;
+	min-height: 100vh;
 }
-form{
-  display: flex;
+form {
+	display: flex;
   flex-direction: column;
-  align-items: flex-start;
+}
+form.register {
+	
+}
+h2 {
+
+}
+input {
+
+}
+input:not([type="submit"]) {
+	
+}
+input:focus:not([type="submit"]) {
+	
+}
+input::placeholder {
+	
+}
+form.register input:not([type="submit"]) {
+	
+}
+form.login input:not([type="submit"]) {
+	
+}
+form.login input[type="submit"] {
+
+}
+form.register input[type="submit"] {
+	
 }
 </style>
